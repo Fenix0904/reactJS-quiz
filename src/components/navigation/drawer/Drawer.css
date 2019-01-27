@@ -14,7 +14,7 @@
     opacity: 1;
 }
 
-.Drawer.close {
+.Drawer.closed {
     transform: translateX(-300px);
 }
 

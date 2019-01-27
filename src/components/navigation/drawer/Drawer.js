@@ -11,7 +11,7 @@ export default class Drawer extends React.Component {
     render() {
         const cls = ['Drawer'];
         if (!this.props.isOpen) {
-            cls.push('close');
+            cls.push('closed');
         }
 
         const backDrop = this.props.isOpen ? <BackDrop onClick={this.props.onClose}/> : null;
