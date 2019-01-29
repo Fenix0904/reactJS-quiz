@@ -14,7 +14,7 @@ const Input = (props) => {
     const errorMessage = isInvalid(props) ? <span>{props.errorMessage || 'You entered invalid data!'}</span> : null;
 
     if (isInvalid(props)) {
-        cls.push('invalid'.toString());
+        cls.push('invalid');
     }
 
     return (
@@ -24,7 +24,7 @@ const Input = (props) => {
                 id={htmlFor}
                 type={type}
                 value={props.value}
-                onChange={props.onChangeListener}
+                onChange={props.onChange}
             />
             {errorMessage}
         </div>
