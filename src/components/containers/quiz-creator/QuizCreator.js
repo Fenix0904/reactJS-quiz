@@ -1,8 +1,9 @@
 import React from 'react';
 import './QuizCreator.css';
 import Button from "../../UI/button/Button";
-import {createControl} from "../../../form/form-framework";
 import Input from "../../UI/input/Input";
+import {createControl} from "../../form/form-framevork";
+import Select from "../../UI/select/Select";
 
 function createControlOptions(number) {
     return createControl({
@@ -29,6 +30,7 @@ export default class QuizCreator extends React.Component {
 
     state = {
         quiz: [],
+        rightAnswerId: 1,
         formControls: createFormControls()
     };
 
@@ -42,6 +44,16 @@ export default class QuizCreator extends React.Component {
 
     createQuizHandler = () => {
 
+    };
+
+    onChangeHandler = (value, controlName) => {
+
+    };
+
+    onSelectChangeHandler = (event) => {
+        this.setState({
+            rightAnswerId: +event.target.value
+        })
     };
 
     renderInputControls = () => {
@@ -66,13 +78,24 @@ export default class QuizCreator extends React.Component {
     };
 
     render() {
+        const select = <Select
+            label="Choose correct answer"
+            value={this.state.rightAnswerId}
+            onChange={this.onSelectChangeHandler}
+            options={[
+                {text: 1, value: 1},
+                {text: 2, value: 2},
+                {text: 3, value: 3},
+                {text: 4, value: 4}
+            ]}
+        />;
         return (
             <div className='QuizCreator'>
                 <div>
                     <h1>Create Quiz</h1>
                     <form onSubmit={this.onSubmitHandler}>
                         {this.renderInputControls()}
-                        <select></select>
+                        {select}
                         <Button
                             type="primary"
                             onClick={this.addQuestionHandler}
@@ -89,9 +112,5 @@ export default class QuizCreator extends React.Component {
                 </div>
             </div>
         );
-    }
-
-    onChangeHandler = (value, controlName) => {
-
     }
 }
