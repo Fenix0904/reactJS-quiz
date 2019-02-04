@@ -3,6 +3,7 @@ import './Auth.css';
 import Button from "../../UI/button/Button";
 import Input from "../../UI/input/Input";
 import is from 'is_js';
+import {validate, validateForm} from "../../form/form-framevork";
 
 export default class Auth extends React.Component {
 
@@ -101,40 +102,12 @@ export default class Auth extends React.Component {
 
         control.value = event.target.value;
         control.touched = true;
-        control.valid = this.validateControl(control.value, control.validation);
+        control.valid = validate(control.value, control.validation);
         formControls[controlName] = control;
 
-        let isFormValid = true;
-
-        Object.keys(formControls).forEach((name) => {
-            isFormValid = formControls[name].valid && isFormValid;
-        });
-
         this.setState({
-            isFormValid,
+            isFormValid: validateForm(formControls),
             formControls
         });
     };
-
-    validateControl(value, validation) {
-        if (!validation) {
-            return true;
-        }
-
-        let isValid = true;
-
-        if (validation.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (validation.email) {
-            isValid = is.email(value);
-        }
-
-        if (validation.minLength) {
-            isValid = value.length >= validation.minLength && isValid;
-        }
-
-        return isValid;
-    }
 }
