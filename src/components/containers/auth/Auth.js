@@ -2,7 +2,6 @@ import React from 'react';
 import './Auth.css';
 import Button from "../../UI/button/Button";
 import Input from "../../UI/input/Input";
-import is from 'is_js';
 import {validate, validateForm} from "../../form/form-framevork";
 
 export default class Auth extends React.Component {
