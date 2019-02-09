@@ -1,0 +1,133 @@
+import React from 'react';
+import './Auth.css';
+import Button from "../../UI/button/Button";
+import Input from "../../UI/input/Input";
+import {validate, validateForm} from "../../form/form-framevork";
+import axios from 'axios';
+
+export default class Auth extends React.Component {
+
+    state = {
+        isFormValid: false,
+        formControls: {
+            email: {
+                value: '',
+                type: 'email',
+                label: "Email",
+                errorMessage: "You've entered an wrong email",
+                valid: false,
+                touched: false,
+                validation: {
+                    required: true,
+                    email: true
+                }
+            },
+            password: {
+                value: '',
+                type: 'password',
+                label: "Password",
+                errorMessage: "You've entered wrong password",
+                valid: false,
+                touched: false,
+                validation: {
+                    required: true,
+                    minLength: 6
+                }
+            }
+        }
+    };
+
+    loginHandler = async () => {
+        const authData = {
+            email: this.state.formControls.email.value,
+            password: this.state.formControls.password.value,
+            returnSecureToken: true
+        };
+        try {
+            const response = await axios.post("https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyAOLW6Oq5DyGRsn8EIKr6IpHlrgTwnNfRs", authData);
+            console.log(response.data);
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    registerHandler = async () => {
+        const authData = {
+            email: this.state.formControls.email.value,
+            password: this.state.formControls.password.value,
+            returnSecureToken: true
+        };
+        try {
+            const response = await axios.post("https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAOLW6Oq5DyGRsn8EIKr6IpHlrgTwnNfRs", authData);
+            console.log(response.data);
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    submitHandler = (event) => {
+        event.preventDefault();
+    };
+
+    render() {
+        return (
+            <div className='Auth'>
+                <div>
+                    <h1>Authorization</h1>
+
+                    <form className='AuthForm' onSubmit={this.submitHandler}>
+                        {this.renderInputs()}
+                        <Button
+                            type='correct'
+                            onClick={this.loginHandler}
+                            disabled={!this.state.isFormValid}
+                        >
+                            Login
+                        </Button>
+                        <Button
+                            type='primary'
+                            onClick={this.registerHandler}
+                            disabled={!this.state.isFormValid}
+                        >
+                            Register
+                        </Button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
+    renderInputs() {
+        return Object.keys(this.state.formControls).map((controlName, index) => {
+            const control = this.state.formControls[controlName];
+            return (
+                <Input
+                    key={controlName + index}
+                    type={control.type}
+                    value={control.value}
+                    valid={control.valid}
+                    touched={control.touched}
+                    label={control.label}
+                    errorMessage={control.errorMessage}
+                    shouldValidate={!!control.validation}
+                    onChange={(event) => this.onChangeHandler(event, controlName)}
+                />
+            )
+        });
+    }
+
+    onChangeHandler = (event, controlName) => {
+        const formControls = {...this.state.formControls};
+        const control = {...formControls[controlName]};
+
+        control.value = event.target.value;
+        control.touched = true;
+        control.valid = validate(control.value, control.validation);
+        formControls[controlName] = control;
+
+        this.setState({
+            isFormValid: validateForm(formControls),
+            formControls
+        });
+    };
+}
