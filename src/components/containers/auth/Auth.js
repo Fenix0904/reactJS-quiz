@@ -3,9 +3,10 @@ import './Auth.css';
 import Button from "../../UI/button/Button";
 import Input from "../../UI/input/Input";
 import {validate, validateForm} from "../../form/form-framevork";
-import axios from 'axios';
+import {connect} from "react-redux";
+import {authenticate} from "../../../store/actions/auth";
 
-export default class Auth extends React.Component {
+class Auth extends React.Component {
 
     state = {
         isFormValid: false,
@@ -37,36 +38,39 @@ export default class Auth extends React.Component {
         }
     };
 
-    loginHandler = async () => {
-        const authData = {
-            email: this.state.formControls.email.value,
-            password: this.state.formControls.password.value,
-            returnSecureToken: true
-        };
-        try {
-            const response = await axios.post("https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyAOLW6Oq5DyGRsn8EIKr6IpHlrgTwnNfRs", authData);
-            console.log(response.data);
-        } catch (e) {
-            console.log(e);
-        }
+    loginHandler = () => {
+        this.props.authenticate(
+            this.state.formControls.email.value,
+            this.state.formControls.password.value,
+            true
+        );
     };
 
-    registerHandler = async () => {
-        const authData = {
-            email: this.state.formControls.email.value,
-            password: this.state.formControls.password.value,
-            returnSecureToken: true
-        };
-        try {
-            const response = await axios.post("https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAOLW6Oq5DyGRsn8EIKr6IpHlrgTwnNfRs", authData);
-            console.log(response.data);
-        } catch (e) {
-            console.log(e);
-        }
+    registerHandler = () => {
+        this.props.authenticate(
+            this.state.formControls.email.value,
+            this.state.formControls.password.value,
+            true
+        );
     };
 
     submitHandler = (event) => {
         event.preventDefault();
+    };
+
+    onChangeHandler = (event, controlName) => {
+        const formControls = {...this.state.formControls};
+        const control = {...formControls[controlName]};
+
+        control.value = event.target.value;
+        control.touched = true;
+        control.valid = validate(control.value, control.validation);
+        formControls[controlName] = control;
+
+        this.setState({
+            isFormValid: validateForm(formControls),
+            formControls
+        });
     };
 
     render() {
@@ -115,19 +119,12 @@ export default class Auth extends React.Component {
             )
         });
     }
-
-    onChangeHandler = (event, controlName) => {
-        const formControls = {...this.state.formControls};
-        const control = {...formControls[controlName]};
-
-        control.value = event.target.value;
-        control.touched = true;
-        control.valid = validate(control.value, control.validation);
-        formControls[controlName] = control;
-
-        this.setState({
-            isFormValid: validateForm(formControls),
-            formControls
-        });
-    };
 }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        authenticate: (email, password, isLogin) => dispatch(authenticate(email, password, isLogin))
+    }
+};
+
+export default connect(null, mapDispatchToProps)(Auth);
