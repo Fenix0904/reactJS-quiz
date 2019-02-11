@@ -50,7 +50,7 @@ class Auth extends React.Component {
         this.props.authenticate(
             this.state.formControls.email.value,
             this.state.formControls.password.value,
-            true
+            false
         );
     };
 
