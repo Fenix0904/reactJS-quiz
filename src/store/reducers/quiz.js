@@ -1,9 +1,20 @@
-import {FETCH_QUIZES_ERROR, FETCH_QUIZES_START, FETCH_QUIZES_SUCCESS} from "../actions/actionTypes";
+import {
+    FETCH_QUIZ_SUCCESS,
+    FETCH_QUIZES_ERROR,
+    FETCH_QUIZES_START,
+    FETCH_QUIZES_SUCCESS, FINISH_QUIZ, MOVE_TO_NEXT_QUESTION, QUIZ_RETRY,
+    QUIZ_SET_STATE
+} from "../actions/actionTypes";
 
 const initialState = {
     quizes: [],
     loading: false,
-    error: null
+    error: null,
+    results: {},
+    isFinished: false,
+    activeQuestion: 0,
+    answerState: null,
+    quiz: null
 };
 
 const quizReducer = (state = initialState, action) => {
@@ -24,6 +35,37 @@ const quizReducer = (state = initialState, action) => {
                 ...state,
                 loading: false,
                 error: action.payLoad
+            };
+        case FETCH_QUIZ_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                quiz: action.payLoad
+            };
+        case QUIZ_SET_STATE:
+            return {
+                ...state,
+                answerState: action.payLoad.answerState,
+                results: action.payLoad.results
+            };
+        case FINISH_QUIZ:
+            return {
+                ...state,
+                isFinished: true
+            };
+        case MOVE_TO_NEXT_QUESTION:
+            return {
+                ...state,
+                answerState: null,
+                activeQuestion: action.payLoad
+            };
+        case QUIZ_RETRY:
+            return {
+                ...state,
+                activeQuestion: 0,
+                answerState: null,
+                isFinished: false,
+                results: {}
             };
         default:
             return state;
