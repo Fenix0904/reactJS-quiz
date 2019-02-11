@@ -1,39 +1,18 @@
 import React from 'react';
 import './QuizList.css';
 import {NavLink} from "react-router-dom";
-import axios from "../../../axios/axios-quiz";
 import Loader from "../../UI/loader/Loader";
+import {connect} from "react-redux";
+import {fetchQuizes} from "../../../store/actions/quiz";
 
-export default class QuizList extends React.Component {
+class QuizList extends React.Component {
 
-    state = {
-        quizes: [],
-        loading: true
-    };
-
-    async componentDidMount() {
-        try {
-            const response = await axios.get('quizes.json');
-            const quizes = [];
-            Object.keys(response.data).forEach((key, index) => {
-                quizes.push({
-                    id: key,
-                    name: `Test № ${index + 1}`
-                })
-            });
-
-            this.setState({
-                quizes,
-                loading: false
-            });
-        } catch (e) {
-            console.log(e);
-        }
-
+    componentDidMount() {
+        this.props.fetchQuizes();
     }
 
     renderQuizes() {
-        return this.state.quizes.map((quiz) => {
+        return this.props.quizes.map((quiz) => {
             return (
                 <li key={quiz.id}>
                     <NavLink to={'/quiz/' + quiz.id}>
@@ -45,7 +24,7 @@ export default class QuizList extends React.Component {
     }
 
     render() {
-        const content = this.state.loading ? <Loader/> : this.renderQuizes();
+        const content = this.props.loading && this.props.quizes.length !== 0 ? <Loader/> : this.renderQuizes();
         return (
             <div className='QuizList'>
                 <div>
@@ -58,3 +37,19 @@ export default class QuizList extends React.Component {
         );
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        quizes: state.quiz.quizes,
+        loading: state.quiz.loading
+    }
+};
+
+ const mapDispatchToProps = (dispatch) => {
+    return {
+        fetchQuizes: () => dispatch(fetchQuizes())
+    }
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuizList);
